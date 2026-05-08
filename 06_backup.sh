@@ -150,10 +150,9 @@ for DIR in "$WEBSITE_BACKUP_DIR" "$DB_BACKUP_DIR" "$CONFIG_BACKUP_DIR"; do
   # BUG-04 FIX: Original: find -name "*.tar.gz" -o -name "*.sql.gz" -mtime +N
   # Without parentheses, -mtime only applies to the last -name condition.
   # FIX: Group conditions in parentheses so -mtime applies to both.
+  # ⚡ Bolt Optimization: Combine count and delete into a single find command using -print -delete (saves filesystem traversal)
   DELETED=$(find "$DIR" \( -name "*.tar.gz" -o -name "*.sql.gz" \) \
-    -mtime "+${RETENTION_DAYS}" 2>/dev/null | wc -l)
-  find "$DIR" \( -name "*.tar.gz" -o -name "*.sql.gz" \) \
-    -mtime "+${RETENTION_DAYS}" -delete 2>/dev/null || true
+    -mtime "+${RETENTION_DAYS}" -print -delete 2>/dev/null | wc -l)
   info "Cleaned $DELETED old files from $DIR"
 done
 

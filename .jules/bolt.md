@@ -1,0 +1,3 @@
+## 2026-05-08 - Bash Script Optimization
+**Learning:** `apt list --upgradable` is a slow operation, taking 1-2 seconds. Running it twice (once to count, once to display) is inefficient. Double `find` operations with complex conditions (like `-name "*.tar.gz" -o -name "*.sql.gz" -mtime +N`) can traverse the filesystem twice, once to count and once to delete.
+**Action:** Cache the result of slow commands using variables. For `find`, use the `-print` and `-delete` actions together in a single command (`find ... -print -delete | wc -l`) to count deleted files without traversing the filesystem twice.
