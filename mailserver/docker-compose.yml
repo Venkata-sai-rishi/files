@@ -1,0 +1,31 @@
+services:
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver
+    # Provide the FQDN of your mail server here (e.g. mail.yourdomain.com)
+    hostname: mail.yourdomain.com
+    env_file: .env
+    # More information about the mail-server ports:
+    # https://docker-mailserver.github.io/docker-mailserver/latest/config/security/understanding-the-ports/
+    ports:
+      - "25:25"     # SMTP  (MTA-to-MTA)
+      - "143:143"   # IMAP  (STARTTLS)
+      - "465:465"   # SMTP  (ESMTPS / Implicit TLS)
+      - "587:587"   # SMTP  (ESMTPSA / STARTTLS)
+      - "993:993"   # IMAP  (IMAPS / Implicit TLS)
+    volumes:
+      - ./docker-data/dms/mail-data/:/var/mail/
+      - ./docker-data/dms/mail-state/:/var/mail-state/
+      - ./docker-data/dms/mail-logs/:/var/log/mail/
+      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+      # Connect to Coolify/Traefik certs directory (Needs mapping to Traefik acme.json if automated, or manual cert mount)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    restart: always
+    stop_grace_period: 1m
+    # Security options
+    cap_add:
+      - NET_ADMIN
+    healthcheck:
+      test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+      timeout: 3s
+      retries: 0
