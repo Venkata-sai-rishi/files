@@ -92,10 +92,16 @@ run_maintenance() {
   # ── 3. Package update check ───────────────────────────────────────────────
   section "PACKAGE UPDATE CHECK"
   apt-get update -qq 2>/dev/null || true
-  UPDATES=$(apt list --upgradable 2>/dev/null | grep -vc '^Listing' || true)
+  # ⚡ Bolt Optimization: Cache the result of apt list to avoid running it twice (saves ~1-2 seconds)
+  UPDATES_LIST=$(apt list --upgradable 2>/dev/null | awk '!/^Listing/ && NF' || true)
+  if [[ -n "$UPDATES_LIST" ]]; then
+    UPDATES=$(echo "$UPDATES_LIST" | wc -l)
+  else
+    UPDATES=0
+  fi
   echo "  Upgradable packages: $UPDATES"
   if [[ "$UPDATES" -gt 0 ]]; then
-    apt list --upgradable 2>/dev/null | grep -v '^Listing' || true
+    echo "$UPDATES_LIST"
     warn "Run 'apt upgrade' to apply updates"
   fi
 
