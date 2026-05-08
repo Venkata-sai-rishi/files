@@ -59,7 +59,7 @@ ufw allow 8000/tcp  comment 'Coolify Dashboard'
 # Allow Docker networks to communicate
 ufw allow in from 172.16.0.0/12 to any
 
-yes | ufw enable
+ufw --force enable
 info "UFW active."
 
 # =============================================================================

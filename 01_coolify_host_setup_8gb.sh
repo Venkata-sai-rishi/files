@@ -117,7 +117,7 @@ ufw allow 8000/tcp  comment 'Coolify Dashboard'
 # Allow Docker networks to communicate (important for internal routing)
 ufw allow in from 172.16.0.0/12 to any
 
-yes | ufw enable
+ufw --force enable
 info "UFW active."
 warn "Note: Docker bypasses UFW by default for mapped ports. Coolify Traefik handles external routing."
 
