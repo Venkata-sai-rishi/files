@@ -8,15 +8,33 @@ This guide details the modern, Docker-first architecture for self-hosting apps o
 
 Before deploying apps, you must secure the host and install Coolify.
 
+**Production VPS:**
 1. SSH into your fresh Ubuntu 24.04 VPS as `root`.
-2. Run the provisioning script:
+2. Run the provisioning script that matches your server's RAM:
    ```bash
-   chmod +x 01_coolify_host_setup.sh
-   sudo ./01_coolify_host_setup.sh
+   # For 8GB RAM servers:
+   chmod +x 01_coolify_host_setup_8gb.sh
+   sudo ./01_coolify_host_setup_8gb.sh
+
+   # For 4GB RAM servers:
+   chmod +x 01_coolify_host_setup_4gb.sh
+   sudo ./01_coolify_host_setup_4gb.sh
    ```
-   *What this does:* Sets up a 4GB swapfile (crucial for 8GB RAM hosts running multiple containers), tunes kernel/network sysctls for Docker, hardens SSH (disables password login), configures the UFW firewall, and installs Fail2Ban and Coolify.
+   *What this does:* Sets up a swapfile, tunes kernel/network sysctls for Docker, hardens SSH (disables password login), configures the UFW firewall, and installs Fail2Ban and Coolify.
 
 3. Navigate to `http://<YOUR_VPS_IP>:8000` to create your Coolify admin account.
+
+**Local Testing (VirtualBox / VMware):**
+If you are deploying locally to test, use the local setup scripts. These scripts omit the strict SSH lockdown and Fail2Ban configuration to prevent locking yourself out of your local VM console.
+```bash
+# For 8GB RAM VMs:
+chmod +x 01_local_test_setup_8gb.sh
+sudo ./01_local_test_setup_8gb.sh
+
+# For 4GB RAM VMs:
+chmod +x 01_local_test_setup_4gb.sh
+sudo ./01_local_test_setup_4gb.sh
+```
 
 ---
 
